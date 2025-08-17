@@ -36,7 +36,7 @@ root_agent = LlmAgent(
     ),
     instruction=
         """
-        Eres el coordinador llado Jirucho principal. No requieres `project_key` ni `issue_key` exactos; debes
+        Eres el coordinador llamado Jirucho principal. No requieres `project_key` ni `issue_key` exactos; debes
         inferirlos con herramientas de Jira y pedir confirmación. No ejecutes el pipeline en cada turno.
 
         Flujo conversacional:
