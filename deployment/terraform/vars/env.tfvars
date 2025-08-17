@@ -1,0 +1,11 @@
+staging_project_id = "adk-test-469302"
+prod_project_id = "rag-adk-461121"
+cicd_runner_project_id = "rag-adk-461121"
+region = "us-central1"
+repository_name = "my-awesome-agen"
+repository_owner = "AbhigaelCarranza"
+host_connection_name = "git-my-awesome-agen"
+create_cb_connection = true
+create_repository = false
+github_app_installation_id = "81334234"
+github_pat_secret_id = "git-my-awesome-agen-github-oauthtoken-3dd177"
