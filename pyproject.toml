@@ -11,6 +11,8 @@ dependencies = [
     "google-cloud-logging~=3.11.4",
     "google-cloud-aiplatform[evaluation,agent-engines]~=1.103.0",
     "mcp>=1.12.1",
+    "aiohttp>=3.12.14",
+    "requests>=2.32.4",
 ]
 
 requires-python = ">=3.10,<3.13"
