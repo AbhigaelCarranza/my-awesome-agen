@@ -54,11 +54,12 @@ deploy-changed:
 	@echo "==============================================================================="
 	@echo "| ⚠️  Note: This uses git diff to detect changes. If you want to force       |"
 	@echo "| deployment of all agents, use 'make deploy-multiple' instead.              |"
+	@echo "| Usage: make deploy-changed BASE_REF=origin/main (to compare against main)   |"
 	@echo "==============================================================================="
 	# Export dependencies to requirements file using uv export.
 	uv export --no-hashes --no-header --no-dev --no-emit-project --no-annotate > .requirements.txt 2>/dev/null || \
 	uv export --no-hashes --no-header --no-dev --no-emit-project > .requirements.txt
-	uv run python deployment/deploy_changed_agents.py
+	uv run python deployment/deploy_changed_agents.py --base-ref $(or $(BASE_REF),HEAD~1)
 
 # Force deploy all agents
 deploy-force:

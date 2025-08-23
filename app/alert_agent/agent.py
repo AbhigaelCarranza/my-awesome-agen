@@ -125,7 +125,7 @@ def schedule_maintenance_alert(maintenance_type: str, scheduled_time: str, durat
 
 root_agent = LlmAgent(
     name="alert_agent",
-    model="gemini-2.5-flash",
+    model="gemini-2.5-flash", # Updated model v2
     description="A specialized alert management agent for creating, monitoring, and managing system notifications and alerts",
     instruction="""
 You are a professional alert management specialist focused on creating timely, accurate, and actionable notifications.

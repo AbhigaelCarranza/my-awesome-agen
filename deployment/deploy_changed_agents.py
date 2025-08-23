@@ -57,10 +57,12 @@ class IntelligentAgentDeployer:
         }
         
         # Archivos que afectan a todos los agentes (solo cambios críticos)
+        # Nota: Reducimos la lista para evitar redespliegues innecesarios
         self.global_files = {
-            "app/utils/",
-            "deployment/deploy_multiple_agents.py",
-            "deployment/deploy_changed_agents.py"
+            "app/utils/gcs.py",
+            "app/utils/tracing.py", 
+            "app/utils/typing.py",
+            "app/utils/utils_fhir.py"
         }
     
     def get_changed_files(self, base_ref: str = "HEAD~1") -> List[str]:
@@ -167,16 +169,30 @@ class IntelligentAgentDeployer:
         
         self.logger.info(f"🎯 Deploying {len(affected_agents)} affected agents: {', '.join(affected_agents)}")
         
-        # Desplegar solo los agentes afectados usando el mismo método que funciona
+        # USAR COMANDOS DIRECTOS DE SISTEMA (como make deploy-agents AGENTS="agent_name")
+        # Esto es lo más simple y sabemos que funciona
         deployed_agents = {}
         
         for agent_name in affected_agents:
             try:
-                remote_agent = self.deployer.deploy_agent(agent_name, requirements_file, env_vars)
-                deployed_agents[agent_name] = remote_agent
+                self.logger.info(f"🚀 Deploying individual agent: {agent_name}")
+                
+                # Ejecutar el comando make directamente
+                cmd = ["make", "deploy-agents", f"AGENTS={agent_name}"]
+                result = subprocess.run(
+                    cmd,
+                    capture_output=True,
+                    text=True,
+                    check=True
+                )
+                
+                deployed_agents[agent_name] = {"status": "deployed", "command": " ".join(cmd)}
                 self.logger.info(f"✅ Successfully deployed {agent_name}")
-            except Exception as e:
+                
+            except subprocess.CalledProcessError as e:
                 self.logger.error(f"❌ Failed to deploy {agent_name}: {e}")
+                self.logger.error(f"   Command output: {e.stdout}")
+                self.logger.error(f"   Command error: {e.stderr}")
                 continue
         
         return deployed_agents
@@ -263,8 +279,8 @@ def main():
         
         print(f"\n🎉 Intelligent Deployment Summary:")
         if deployed_agents:
-            for agent_name, agent in deployed_agents.items():
-                print(f"   ✅ {agent_name}: {agent.resource_name}")
+            for agent_name, result in deployed_agents.items():
+                print(f"   ✅ {agent_name}: {result['status']} via {result['command']}")
         else:
             print("   📭 No agents needed deployment")
             

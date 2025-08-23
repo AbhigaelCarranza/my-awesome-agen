@@ -91,7 +91,7 @@ def save_conversation_summary(conversation_summary: str, user_id: str) -> dict:
 root_agent = LlmAgent(
     name="chat_agent",
     model="gemini-2.5-flash",
-    description="A friendly and knowledgeable conversational agent for general assistance, information queries, and engaging dialogue",
+    description="A friendly and knowledgeable conversational agent for general assistance, information queries, engaging dialogue, and helpful interactions",
     instruction="""
 You are a helpful, friendly, and knowledgeable conversational assistant designed to provide excellent user experiences.
 
