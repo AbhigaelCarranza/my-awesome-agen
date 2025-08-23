@@ -14,11 +14,61 @@ playground:
 	@echo "==============================================================================="
 	uv run adk web --port 8501
 
-# Deploy the agent remotely
+# Deploy single agent (legacy)
 backend:
 	# Export dependencies to requirements file using uv export.
 	uv export --no-hashes --no-header --no-dev --no-emit-project --no-annotate > .requirements.txt 2>/dev/null || \
 	uv export --no-hashes --no-header --no-dev --no-emit-project > .requirements.txt && uv run app/agent_engine_app.py
+
+# Deploy multiple agents to Vertex AI Agent Engine
+deploy-multiple:
+	@echo "==============================================================================="
+	@echo "| 🚀 Deploying multiple business agents to Vertex AI Agent Engine...         |"
+	@echo "==============================================================================="
+	# Export dependencies to requirements file using uv export.
+	uv export --no-hashes --no-header --no-dev --no-emit-project --no-annotate > .requirements.txt 2>/dev/null || \
+	uv export --no-hashes --no-header --no-dev --no-emit-project > .requirements.txt
+	uv run python deployment/deploy_multiple_agents.py
+
+# Deploy specific agents
+deploy-agents:
+	@echo "==============================================================================="
+	@echo "| 🚀 Deploying specific agents to Vertex AI Agent Engine...                  |"
+	@echo "| Usage: make deploy-agents AGENTS='summarize_agent chat_agent'              |"
+	@echo "==============================================================================="
+	uv export --no-hashes --no-header --no-dev --no-emit-project --no-annotate > .requirements.txt 2>/dev/null || \
+	uv export --no-hashes --no-header --no-dev --no-emit-project > .requirements.txt
+	uv run python deployment/deploy_multiple_agents.py --agents $(AGENTS)
+
+# Test multiple agents locally
+test-agents:
+	@echo "==============================================================================="
+	@echo "| 🧪 Testing multiple agents locally...                                      |"
+	@echo "==============================================================================="
+	uv run python test_multiple_agents.py
+
+# Deploy only changed agents (intelligent deployment)
+deploy-changed:
+	@echo "==============================================================================="
+	@echo "| 🧠 Deploying only changed agents to Vertex AI Agent Engine...              |"
+	@echo "==============================================================================="
+	@echo "| ⚠️  Note: This uses git diff to detect changes. If you want to force       |"
+	@echo "| deployment of all agents, use 'make deploy-multiple' instead.              |"
+	@echo "==============================================================================="
+	# Export dependencies to requirements file using uv export.
+	uv export --no-hashes --no-header --no-dev --no-emit-project --no-annotate > .requirements.txt 2>/dev/null || \
+	uv export --no-hashes --no-header --no-dev --no-emit-project > .requirements.txt
+	uv run python deployment/deploy_changed_agents.py
+
+# Force deploy all agents
+deploy-force:
+	@echo "==============================================================================="
+	@echo "| 🚀 Force deploying all agents to Vertex AI Agent Engine...                 |"
+	@echo "==============================================================================="
+	# Export dependencies to requirements file using uv export.
+	uv export --no-hashes --no-header --no-dev --no-emit-project --no-annotate > .requirements.txt 2>/dev/null || \
+	uv export --no-hashes --no-header --no-dev --no-emit-project > .requirements.txt
+	uv run python deployment/deploy_changed_agents.py --force-all
 
 # Set up development environment resources using Terraform
 setup-dev-env:

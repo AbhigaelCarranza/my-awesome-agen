@@ -1,0 +1,22 @@
+{
+  "deployment_timestamp": "2025-08-23T01:28:10.251947",
+  "project": "rag-adk-461121",
+  "location": "us-central1",
+  "agents": {
+    "summarize_agent": {
+      "resource_name": "projects/1076525831525/locations/us-central1/reasoningEngines/5128196998737952768",
+      "display_name": "Summarize Agent",
+      "status": "deployed"
+    },
+    "chat_agent": {
+      "resource_name": "projects/1076525831525/locations/us-central1/reasoningEngines/9177496013697449984",
+      "display_name": "Chat Agent",
+      "status": "deployed"
+    },
+    "alert_agent": {
+      "resource_name": "projects/1076525831525/locations/us-central1/reasoningEngines/3669593669423333376",
+      "display_name": "Alert Agent",
+      "status": "deployed"
+    }
+  }
+}
