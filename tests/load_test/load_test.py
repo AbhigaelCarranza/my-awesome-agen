@@ -26,8 +26,22 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # Initialize Vertex AI and load agent config
-with open("deployment_metadata.json") as f:
-    remote_agent_engine_id = json.load(f)["remote_agent_engine_id"]
+# Load multiple agents metadata
+with open("deployment_metadata_multiple_agents.json") as f:
+    metadata = json.load(f)
+
+# Get the agent to test (default to chat_agent, or from environment variable)
+agent_to_test = os.environ.get("LOAD_TEST_AGENT", "chat_agent")
+logger.info(f"Testing agent: {agent_to_test}")
+
+# Get the specific agent's resource name
+if agent_to_test not in metadata["agents"]:
+    available_agents = list(metadata["agents"].keys())
+    logger.error(f"Agent '{agent_to_test}' not found. Available agents: {available_agents}")
+    raise ValueError(f"Agent '{agent_to_test}' not found in deployment metadata")
+
+agent_info = metadata["agents"][agent_to_test]
+remote_agent_engine_id = agent_info["resource_name"]
 
 parts = remote_agent_engine_id.split("/")
 project_id = parts[1]
@@ -55,9 +69,18 @@ class ChatStreamUser(HttpUser):
         headers = {"Content-Type": "application/json"}
         headers["Authorization"] = f"Bearer {os.environ['_AUTH_TOKEN']}"
 
+        # Customize message based on the agent being tested
+        messages = {
+            "chat_agent": "Hello! Can you help me understand artificial intelligence?",
+            "summarize_agent": "Please summarize this quarterly business report with key points",
+            "alert_agent": "Create a critical alert for system downtime"
+        }
+        
+        test_message = messages.get(agent_to_test, "Hello, how can you help me?")
+        
         data = {
             "input": {
-                "message": "What's the weather in San Francisco?",
+                "message": test_message,
                 "user_id": "test",
             }
         }
